@@ -4,6 +4,18 @@ def get_age(raw_age):
 
 
 
+class Family:
+
+    def __init__(self, id, father, mother, childnum, children, maxChildAge, minChildAge):
+        self.id = id
+        self.father = father
+        self.mother = mother
+        self.childnum = childnum
+        self.children = children
+        self.maxChildAge = maxChildAge
+        self.minChildAge = minChildAge
+
+
 class Person:
 
     def __init__(self, Id, ParentId, Gender, BirthDate, PostalCode, IsUrban, ProvinceName, CountyName,
@@ -20,6 +32,7 @@ class Person:
         self.PostalCode = PostalCode
         self.IsUrban = IsUrban
         self.ProvinceName = ProvinceName
+        self.ProvinceId = self.get_provinceId()
         self.CountyName = CountyName
         self.Trip_AirNonPilgrimageCount_95 = Trip_AirNonPilgrimageCount_95
         self.Trip_AirNonPilgrimageCount_96 = Trip_AirNonPilgrimageCount_96
@@ -57,8 +70,75 @@ class Person:
         self.IsBimePardaz_Sandoghha = IsBimePardaz_Sandoghha
         self.Daramad_Total_Rials = Daramad_Total_Rials
 
-people = []
-ages = [0 for i in range(20)]
+    def get_provinceId(self):
+        if self.ProvinceName == 'آذربایجان غربی':
+            self.ProvinceId = 0
+
+        elif self.ProvinceName == 'آذربایجان شرقی':
+            self.ProvinceId = 1
+        elif self.ProvinceName == 'اردبیل':
+            self.ProvinceId = 2
+        elif self.ProvinceName == 'گیلان':
+            self.ProvinceId = 3
+        elif self.ProvinceName == 'کردستان':
+            self.ProvinceId = 4
+        elif self.ProvinceName == 'زنجان':
+            self.ProvinceId = 5
+        elif self.ProvinceName == 'قزوین':
+            self.ProvinceId = 6
+        elif self.ProvinceName == 'تهران' or self.ProvinceName == 'البرز':
+            self.ProvinceId = 7
+        elif self.ProvinceName == 'مازندران':
+            self.ProvinceId = 8
+        elif self.ProvinceName == 'گلستان':
+            self.ProvinceId = 9
+        elif self.ProvinceName == 'خراسان شمالی':
+            self.ProvinceId = 10
+        elif self.ProvinceName == 'خراسان رضوی':
+            self.ProvinceId = 11
+        elif self.ProvinceName == 'کرمانشاه':
+            self.ProvinceId = 12
+        elif self.ProvinceName == 'همدان':
+            self.ProvinceId = 13
+        elif self.ProvinceName == 'مرکزی':
+            self.ProvinceId = 14
+        elif self.ProvinceName == 'قم':
+            self.ProvinceId = 15
+        elif self.ProvinceName == 'سمنان':
+            self.ProvinceId = 16
+        elif self.ProvinceName == 'ایلام':
+            self.ProvinceId = 17
+        elif self.ProvinceName == 'لرستان':
+            self.ProvinceId = 18
+        elif self.ProvinceName == 'اصفهان':
+            self.ProvinceId = 19
+        elif self.ProvinceName == 'یزد':
+            self.ProvinceId = 20
+        elif self.ProvinceName == 'خراسان جنوبی':
+            self.ProvinceId = 21
+        elif self.ProvinceName == 'خوزستان':
+            self.ProvinceId = 22
+        elif self.ProvinceName == 'چهارمحال وبختیاری':
+            self.ProvinceId = 23
+        elif self.ProvinceName == 'کهگیلویه و بویراحمد':
+            self.ProvinceId = 24
+        elif self.ProvinceName == 'بوشهر':
+            self.ProvinceId = 25
+        elif self.ProvinceName == 'فارس':
+            self.ProvinceId = 26
+        elif self.ProvinceName == 'کرمان':
+            self.ProvinceId = 27
+        elif self.ProvinceName == 'سیستان و بلوچستان':
+            self.ProvinceId = 28
+        elif self.ProvinceName == 'هرمزگان':
+            self.ProvinceId = 29
+        else:
+
+            return 30
+
+
+
+
 
 def add_ages(age):
     if age <= 5:
@@ -102,14 +182,44 @@ def add_ages(age):
     else:
         ages[19] += 1
 
-
+families = []
+family_ids = []
+people = []
+ages = [0 for i in range(20)]
 
 with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
     lines = f.readlines()
     for line in lines[1:]:
-        people.append(Person(*line.split(',')))
+        p = Person(*line.split(','))
+        people.append(p)
 
-        add_ages(people[-1].Age)
+        if p.ParentId == p.Id:
 
 
-print(ages)
+            if p.Gender == 1:
+                if len(families) == 0:
+                    families.append(Family(p.Id, p, None, 0, [], 0, 100))
+
+                elif families[-1].id != p.Id:
+                    families.append(Family(p.Id, p, None, 0, [], 0, 100))
+                else:
+                    families[-1].father = p
+            else:
+                if len(families) == 0:
+                    families.append(Family(p.Id, None, p, 0, [], 0, 100))
+                elif families[-1].id != p.Id:
+                    families.append(Family(p.Id, None, p, 0, [], 0, 100))
+                else:
+                    families[-1].mother = p
+
+        else:
+            if families[-1].id != p.ParentId:
+
+                families.append(Family(p.ParentId, p, None, 0, [], 0, 100))
+
+            families[-1].children.append(p)
+
+
+        add_ages(p.Age)
+
+print(len(people))
