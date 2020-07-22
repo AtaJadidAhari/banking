@@ -1,3 +1,4 @@
+import random
 def get_age(raw_age):
 
     return 2020 - int(raw_age.split('-')[0])
@@ -70,6 +71,9 @@ class Person:
         self.IsBimePardaz_Sandoghha = IsBimePardaz_Sandoghha
         self.Daramad_Total_Rials = Daramad_Total_Rials
 
+        self.Religion = random.randint(0, 7)
+        self.Education = random.randint(0, 5)
+
     def get_provinceId(self):
         if self.ProvinceName == 'آذربایجان غربی':
             self.ProvinceId = 0
@@ -132,6 +136,7 @@ class Person:
             self.ProvinceId = 28
         elif self.ProvinceName == 'هرمزگان':
             self.ProvinceId = 29
+
         else:
 
             return 30
