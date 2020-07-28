@@ -1,6 +1,23 @@
 import random
-def get_age(raw_age):
 
+death_probs_male = [0 for i in range(99)]
+with open('./Data/deathprobmale.txt', 'r') as f:
+    lines = f.readlines()
+    for i in range(99):
+        death_probs_male[i] = (float(lines[i]))
+
+death_probs_female = [0 for i in range(99)]
+with open('./Data/deathprobfemale.txt', 'r') as f:
+    lines = f.readlines()
+    for i in range(99):
+        death_probs_female[i] = (float(lines[i]))
+
+
+
+
+
+def get_age(raw_age):
+    ages.append(2020 - int(raw_age.split('-')[0]))
     return 2020 - int(raw_age.split('-')[0])
 
 
@@ -26,10 +43,13 @@ class Person:
                  Variz97, MandehAval97, MandehAkhar97, Sood97, Card9801, Card9802, Card9803, Card9804,
                  Card9805, Card9806, IsBehzisti_Malool, IsBimarkhas, SenfName, IsTamin_Karfarma, Tamin_KargarCount,
                  IsBazneshaste_Sandoghha, IsBimePardaz_Sandoghha, Daramad_Total_Rials):
-        self.Id = Id
-        self.ParentId = ParentId
-        self.Gender = Gender
-        self.Age = get_age(BirthDate)
+        self.id = Id
+        self.parentId = ParentId
+        self.gender = 0 #man
+
+        if Gender == 'زن':
+            self.gender = 1
+        self.age = get_age(BirthDate)
         self.PostalCode = PostalCode
         self.IsUrban = IsUrban
         self.ProvinceName = ProvinceName
@@ -71,8 +91,11 @@ class Person:
         self.IsBimePardaz_Sandoghha = IsBimePardaz_Sandoghha
         self.Daramad_Total_Rials = Daramad_Total_Rials
 
-        self.Religion = random.randint(0, 7)
-        self.Education = random.randint(0, 5)
+        self.religion = random.randint(0, 7)
+        self.education = random.randint(0, 5)
+        self.alive = True
+        self.x = 0
+        self.y = 0
 
     def get_provinceId(self):
         if self.ProvinceName == 'آذربایجان غربی':
@@ -185,6 +208,7 @@ def add_ages(age):
     elif age <= 95:
         ages[18] += 1
     else:
+
         ages[19] += 1
 
 families = []
@@ -192,39 +216,55 @@ family_ids = []
 people = []
 ages = [0 for i in range(20)]
 
+men = []
+women = []
+
+men_num = 0
+women_num = 0
+
 with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
     lines = f.readlines()
     for line in lines[1:]:
         p = Person(*line.split(','))
         people.append(p)
 
-        if p.ParentId == p.Id:
+        if p.parentId == p.id:
 
 
-            if p.Gender == 1:
+            if p.gender == 0:
+                women_num += 1
                 if len(families) == 0:
-                    families.append(Family(p.Id, p, None, 0, [], 0, 100))
+                    families.append(Family(p.id, p, None, 0, [], 0, 100))
 
-                elif families[-1].id != p.Id:
-                    families.append(Family(p.Id, p, None, 0, [], 0, 100))
+                elif families[-1].id != p.id:
+                    families.append(Family(p.id, p, None, 0, [], 0, 100))
                 else:
                     families[-1].father = p
             else:
+                men_num += 1
                 if len(families) == 0:
-                    families.append(Family(p.Id, None, p, 0, [], 0, 100))
-                elif families[-1].id != p.Id:
-                    families.append(Family(p.Id, None, p, 0, [], 0, 100))
+                    families.append(Family(p.id, None, p, 0, [], 0, 100))
+                elif families[-1].id != p.id:
+                    families.append(Family(p.id, None, p, 0, [], 0, 100))
                 else:
                     families[-1].mother = p
 
         else:
-            if families[-1].id != p.ParentId:
+            if p.gender == 0 and p.age > 15:
 
-                families.append(Family(p.ParentId, p, None, 0, [], 0, 100))
+                men.append(p)
+
+            else:
+                women.append(p)
+
+            if families[-1].id != p.parentId:
+
+                families.append(Family(p.parentId, p, None, 0, [], 0, 100))
 
             families[-1].children.append(p)
 
 
-        add_ages(p.Age)
+        add_ages(p.age)
 
-print(len(people))
+
+
