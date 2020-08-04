@@ -61,19 +61,35 @@ def educate():
         if people[i].age > 27 and people[i].IE >= 6:
             people[i].education = 6
 
+def death(p):
+    p.alive = False
+    family = families[p.family_id]
+
+
+    if family.father is not None and p.id == family.father.id:
+        family.father = None
+    elif family.mother is not None and p.id == family.mother.id:
+        family.mother = None
+    else:
+        #print(p.id, p.parentId, family.parent_id, p.family_id)
+
+        family.children.remove(p)
+
 
 def age():
     for i in range(len(people)):
-        people[i].age += 1
-        if people[i].age >= 100:
-            people[i].age = 99
-        if people[i].gender == 0: #man:
+        if people[i].alive:
+            people[i].age += 1
+            if people[i].age >= 100:
+                people[i].age = 99
+            if people[i].gender == 0: #man:
 
-            if random.random() <= death_probs_male[people[i].age - 1]:
-                people[i].alive = False
-        else:
-            if random.random() <= death_probs_female[people[i].age -1]:
-                people[i].alive = False
+                if random.random() <= death_probs_male[people[i].age - 1]:
+                    death(people[i])
+
+            else:
+                if random.random() <= death_probs_female[people[i].age -1]:
+                    death(people[i])
 
 
 
@@ -116,9 +132,9 @@ alive = 0
 def simulate():
     global alive
     step = 0
-    num_iter = 100
+    num_iter = 3
     while step < num_iter:
-
+        print('iteration: ' + str(step))
         step += 1
 
 
@@ -150,4 +166,3 @@ for j in range(len(neighbors)):
         socialNetwork.append(neighbors[j])
 
 """
-
