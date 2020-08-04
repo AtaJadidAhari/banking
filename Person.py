@@ -24,7 +24,7 @@ def get_age(raw_age):
 
 class Family:
 
-    def __init__(self, id, father, mother, childnum, children, maxChildAge, minChildAge):
+    def __init__(self, id, parent_id, father, mother, childnum, children, maxChildAge, minChildAge):
         self.id = id
         self.father = father
         self.mother = mother
@@ -32,11 +32,12 @@ class Family:
         self.children = children
         self.maxChildAge = maxChildAge
         self.minChildAge = minChildAge
+        self.parent_id = parent_id
 
 
 class Person:
 
-    def __init__(self, Id, ParentId, Gender, BirthDate, PostalCode, IsUrban, ProvinceName, CountyName,
+    def __init__(self, index, Id, ParentId, Gender, BirthDate, PostalCode, IsUrban, ProvinceName, CountyName,
                  Trip_AirNonPilgrimageCount_95, Trip_AirNonPilgrimageCount_96, Trip_AirNonPilgrimageCount_97,
                  Trip_AirNonPilgrimageCount_98, Cars_Count, CarPrice_Sum, Bardasht95, Variz95, MandehAval95,
                  MandehAkhar95, Sood95, Bardasht96, Variz96, MandehAval96, MandehAkhar96, Sood96, Bardasht97,
@@ -98,7 +99,11 @@ class Person:
         self.y = 0
         self.IE = 0 #intended education
         self.w = 0
-        self.married = True
+        self.married = False
+        self.family_id = -1
+
+        self.index = index
+
 
 
     def get_provinceId(self):
@@ -216,7 +221,8 @@ def add_ages(age):
         ages[19] += 1
 
 families = []
-family_ids = []
+family_id = 1
+person_index = 0
 people = []
 ages = [0 for i in range(20)]
 
@@ -228,14 +234,24 @@ women_num = 0
 
 
 
-def set_parent():
 
+
+def set_parent():
+    to_remove = []
+    children = []
     for i in range(len(families)):
         minimum_difference = 100
         index = -1
-        if families[i].mother is None:
+
+        if families[i].mother is None and families[i].father is None:
+            to_remove.append(i)
+            for c in families[i].children:
+                children.append(c.index)
+            continue
+        elif families[i].mother is None:
             for j in range(len(families[i].children)):
                 if families[i].children[j].gender == 1:
+
                     if math.fabs(families[i].children[j].age - families[i].father.age) < minimum_difference:
                         index = j
                         minimum_difference =  math.fabs(families[i].children[j].age - families[i].father.age)
@@ -253,38 +269,58 @@ def set_parent():
             if minimum_difference < 20:
                 families[i].father = families[i].children[index]
                 del (families[i].children[index])
+    """
+    to_remove = [to_remove[i] - i for i in range(len(to_remove))]
+    for i in to_remove:
+        del (families[i])
+
+    children = [children[i] - i for i in range(len(children))]
+    for i in children:
+        del (people[i])
+    """
 
 
+parent_ids = []
 with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
     lines = f.readlines()
     for line in lines[1:]:
-        p = Person(*line.split(','))
+        p = Person(person_index, *line.split(','))
+        person_index += 1
+        parent_ids.append(p.parentId)
+
         people.append(p)
 
-        if p.parentId == p.id:
+        if p.parentId == p.id: #this person is sarparast khanevar
 
 
             if p.gender == 0:
 
 
                 if len(families) == 0:
-                    families.append(Family(p.id, p, None, 0, [], 0, 100))
 
-                elif families[-1].id != p.id:
-                    families.append(Family(p.id, p, None, 0, [], 0, 100))
+                    families.append(Family(family_id, p.id, p, None, 0, [], 0, 100))
+                    family_id += 1
+
+                elif families[-1].parent_id != p.id:
+                    families.append(Family(family_id, p.id, p, None, 0, [], 0, 100))
+                    family_id += 1
                 else:
+
                     families[-1].father = p
             else:
 
                 women_num += 1
                 if len(families) == 0:
-                    families.append(Family(p.id, None, p, 0, [], 0, 100))
-                elif families[-1].id != p.id:
-                    families.append(Family(p.id, None, p, 0, [], 0, 100))
+                    families.append(Family(family_id, p.id, None, p, 0, [], 0, 100))
+                    family_id += 1
+                elif families[-1].parent_id != p.id:
+                    families.append(Family(family_id, p.id, None, p, 0, [], 0, 100))
+                    family_id += 1
                 else:
+
                     families[-1].mother = p
 
-        else:
+        else: #this person is not sarparast khanevar
             if p.gender == 0 and p.age > 15:
 
                 men.append(p)
@@ -292,14 +328,35 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
             else:
                 women.append(p)
 
-            if families[-1].id != p.parentId:
+            if families[-1].parent_id != p.parentId:
 
-                families.append(Family(p.parentId, p, None, 0, [], 0, 100))
+                family_id += 1
+                families.append(Family(family_id, p.parentId, None, None, 0, [], 0, 100))
+
 
             families[-1].children.append(p)
 
 
         add_ages(p.age)
 
+
 set_parent()
 
+for i in range(len(families)):
+    if families[i].father is not None and families[i].mother is not None:
+        families[i].father.married = True
+        families[i].mother.married = True
+
+#print(families[23].father.id, families[23].parent_id)
+#print(people[61].parentId, people[61].id, people[61].family_id)
+#print(people[62].parentId, people[62].id, people[62].family_id)
+#print(people[63].parentId, people[63].id, people[63].family_id)
+#print(families[24].parent_id)
+
+for i in range(len(families)):
+    if families[i].father is not None:
+        families[i].father.family_id = i
+    if families[i].mother is not None:
+        families[i].mother.family_id = i
+    for j in range(len(families[i].children)):
+        families[i].children[j].family_id = i
