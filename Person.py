@@ -96,6 +96,10 @@ class Person:
         self.alive = True
         self.x = 0
         self.y = 0
+        self.IE = 0 #intended education
+        self.w = 0
+        self.married = True
+
 
     def get_provinceId(self):
         if self.ProvinceName == 'آذربایجان غربی':
@@ -265,6 +269,9 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
 
 
         add_ages(p.age)
+
+
+
 
 
 
