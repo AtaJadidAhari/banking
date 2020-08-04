@@ -1,5 +1,5 @@
 import random
-
+import math
 death_probs_male = [0 for i in range(99)]
 with open('./Data/deathprobmale.txt', 'r') as f:
     lines = f.readlines()
@@ -226,6 +226,35 @@ women = []
 men_num = 0
 women_num = 0
 
+
+
+def set_parent():
+
+    for i in range(len(families)):
+        minimum_difference = 100
+        index = -1
+        if families[i].mother is None:
+            for j in range(len(families[i].children)):
+                if families[i].children[j].gender == 1:
+                    if math.fabs(families[i].children[j].age - families[i].father.age) < minimum_difference:
+                        index = j
+                        minimum_difference =  math.fabs(families[i].children[j].age - families[i].father.age)
+            if minimum_difference < 20:
+                families[i].mother = families[i].children[index]
+                del(families[i].children[index])
+
+        else:
+            for j in range(len(families[i].children)):
+
+                if families[i].children[j].gender == 0:
+                    if math.fabs(families[i].children[j].age - families[i].mother.age) < minimum_difference:
+                        index = j
+                        minimum_difference = math.fabs(families[i].children[j].age - families[i].mother.age)
+            if minimum_difference < 20:
+                families[i].father = families[i].children[index]
+                del (families[i].children[index])
+
+
 with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
     lines = f.readlines()
     for line in lines[1:]:
@@ -236,7 +265,8 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
 
 
             if p.gender == 0:
-                women_num += 1
+
+
                 if len(families) == 0:
                     families.append(Family(p.id, p, None, 0, [], 0, 100))
 
@@ -245,7 +275,8 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
                 else:
                     families[-1].father = p
             else:
-                men_num += 1
+
+                women_num += 1
                 if len(families) == 0:
                     families.append(Family(p.id, None, p, 0, [], 0, 100))
                 elif families[-1].id != p.id:
@@ -270,8 +301,5 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
 
         add_ages(p.age)
 
-
-
-
-
+set_parent()
 
