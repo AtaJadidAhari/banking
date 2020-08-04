@@ -3,9 +3,28 @@ import math
 import random
 marriage_probs = [0.1 for i in range(100)]
 
-r = 3 #religion difference
-e = 3 #education difference
+r = 1 #religion difference
+e = 2 #education difference
 d = 10 #province distance
+w = 2 #economic distance
+
+gammaBar = 2 #in calculating social network
+alpha = 2 #in calculating social pressure
+beta = 2 #in calculating social pressure
+
+
+
+
+
+
+
+def set_parameters(sn):
+    w = 10
+    r = 5
+
+
+
+
 
 def religoun_neighbor(p1, p2):
     if math.abs(p1.religoun - p2.religoun) <= r:
@@ -22,6 +41,27 @@ def province_neighbor(p1, p2):
         return True
     return False
 
+def economic_neighbor(p1, p2):
+    if math.abs(p1.w - p2.w) <= w:
+        return True
+    return False
+
+def educate():
+    for i in range(len(people)):
+        if people[i].age > 7 and people[i].IE >= 1:
+            people[i].education =  1
+        if people[i].age > 15 and people[i].IE >= 2:
+            people[i].education =  2
+        if people[i].age > 18 and people[i].IE >= 3:
+            people[i].education = 3
+        if people[i].age > 20 and people[i].IE >= 4:
+            people[i].education = 4
+        if people[i].age > 22 and people[i].IE >= 5:
+            people[i].education = 5
+        if people[i].age > 27 and people[i].IE >= 6:
+            people[i].education = 6
+
+
 def age():
     for i in range(len(people)):
         people[i].age += 1
@@ -36,9 +76,40 @@ def age():
                 people[i].alive = False
 
 
+
+def probability_of_marriage(neighbors):
+    married = 0
+    for person in neighbors:
+        if person.married:
+            married += 1
+    return married/len(neighbors)
+
+
+
 def marriage():
     for i in range(len(men)):
+        neighbors = []
+        for j in range(len(people)):
+
+            if province_neighbor(men[i], people[j]) and  economic_neighbor(men[i], people[j])  :
+                if i != j:
+                    neighbors.append(people[j])
         potential_wives = []
+
+        social_pressure = math.exp(beta * (probability_of_marriage(neighbors) - alpha)) / (1 + math.exp(beta * (probability_of_marriage(neighbors) - alpha)))
+
+        set_parameters(social_pressure)
+        for j in range(len(women)):
+            if religoun_neighbor(men[i], neighbors[j]) and \
+                    men[i].age - 2 <= neighbors[j].age <= men[i].age + 2 and \
+                    education_neighbor(men[i], women[j]) and \
+                    economic_neighbor(men[i], women[j]) and \
+                    province_neighbor(men[i], women[j]):
+                potential_wives.append(neighbors[j])
+
+
+        wife = select_wife(potential_wives, men[i])
+        create_family(men[i], wife)
 
 alive = 0
 
@@ -47,17 +118,36 @@ def simulate():
     step = 0
     num_iter = 100
     while step < num_iter:
-        """
-        for i in people:
-            if i.alive:
-                alive += 1
-        print("alive: " , alive ,  "dead: " , len(people) - alive , " step: ", step)
-        alive = 0
-        """
+
         step += 1
 
-        #marriage()
-        age()
+
+        age() #age and death
+        # marriage()
+        # reproduce()
+        educate()
 
 simulate()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+for j in range(len(neighbors)):
+    if religoun_neighbor(men[i], neighbors[j]) and \
+            men[i].age - gammaBar <= neighbors[j].age <= men[i].age + gammaBar and \
+            education_neighbor(men[i], neighbors[j]):
+        socialNetwork.append(neighbors[j])
+
+"""
 
