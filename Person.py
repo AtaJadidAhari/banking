@@ -54,7 +54,8 @@ class Person:
         self.PostalCode = PostalCode
         self.IsUrban = IsUrban
         self.ProvinceName = ProvinceName
-        self.ProvinceId = self.get_provinceId()
+        self.ProvinceId = 0
+        self.get_provinceId()
         self.CountyName = CountyName
         self.Trip_AirNonPilgrimageCount_95 = Trip_AirNonPilgrimageCount_95
         self.Trip_AirNonPilgrimageCount_96 = Trip_AirNonPilgrimageCount_96
@@ -95,8 +96,8 @@ class Person:
         self.religion = random.randint(0, 7)
         self.education = random.randint(0, 5)
         self.alive = True
-        self.x = 0
-        self.y = 0
+        self.x = self.ProvinceId//5
+        self.y = self.ProvinceId - (self.ProvinceId//5 * 5)
         self.IE = 0 #intended education
         self.w = 0
         self.married = False
@@ -283,11 +284,11 @@ def set_parent():
 parent_ids = []
 with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
     lines = f.readlines()
-    for line in lines[1:]:
+    for line in lines[1:100]:
         p = Person(person_index, *line.split(','))
         person_index += 1
         parent_ids.append(p.parentId)
-
+        print(p.x, p.y, p.ProvinceId)
         people.append(p)
 
         if p.parentId == p.id: #this person is sarparast khanevar
