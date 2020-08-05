@@ -13,38 +13,77 @@ alpha = 2 #in calculating social pressure
 beta = 2 #in calculating social pressure
 
 
+r_low = -1
+r_high = 2
+w_low = -1
+w_high = 2
+e_low = -1
+e_high = 2
+
+
 
 
 
 
 
 def set_parameters(sn):
-    w = 10
-    r = 5
+    global r_low, r_high, w_low, w_high, e_low, e_high
+    if 0 <= sn <= 0.2:
+        r_low = w_low = e_low = -1
+        r_high = w_high = e_high = 2
+
+    elif sn <= 0.5:
+        r_low = w_low = e_low = -1
+        r_high = w_high = e_high = 3
+
+    elif sn <= 0.8:
+        r_low = w_low = e_low = -2
+        r_high = w_high = e_high = 4
+
+    else:
+        r_low = w_low = e_low = -1
+        r_high = w_high = e_high = -3
 
 
 
 
 
-def religoun_neighbor(p1, p2):
-    if math.abs(p1.religoun - p2.religoun) <= r:
-        return True
-    return False
 
-def education_neighbor(p1, p2):
-    if math.abs(p1.education - p2.education) <= e:
-        return True
-    return False
+def religion_neighbor(p1, p2, method=0):
+    if method == 0:
+        if math.abs(p1.religion - p2.religion) <= r:
+            return True
+        return False
+    else:
+        if r_low <= p2.religion - p1.religion <= r_high:
+            return True
+        return False
 
-def province_neighbor(p1, p2):
+def education_neighbor(p1, p2, method=0):
+    if method == 0:
+        if math.abs(p1.education - p2.education) <= e:
+            return True
+        return False
+    else:
+        if e_low <= p2.education - p1.education <= e_high:
+            return True
+        return False
+
+def province_neighbor(p1, p2, method=0):
+
     if math.abs(p1.x - p2.x)**2 + math.abs(p1.y - p2.y)**2 <= d:
         return True
     return False
 
-def economic_neighbor(p1, p2):
-    if math.abs(p1.w - p2.w) <= w:
-        return True
-    return False
+def economic_neighbor(p1, p2, method=0):
+    if method == 0:
+        if math.abs(p1.w - p2.w) <= w:
+            return True
+        return False
+    else:
+        if w_low <= p2.w - p1.w <= w_high:
+            return True
+        return False
 
 def educate():
     for i in range(len(people)):
@@ -101,6 +140,15 @@ def probability_of_marriage(neighbors):
     return married/len(neighbors)
 
 
+def create_family(husband, wife):
+    families.append(Family(len(families), husband.id, husband, wife, 0, [], 0, 100))
+    husband.married = True
+    wife.married = True
+
+def select_wife(wifes, man):
+    #select wife based on probability
+    return wifes[0]
+
 
 def marriage():
     for i in range(len(men)):
@@ -110,18 +158,29 @@ def marriage():
             if province_neighbor(men[i], people[j]) and  economic_neighbor(men[i], people[j])  :
                 if i != j:
                     neighbors.append(people[j])
+
+        social_network = []
+        b = random.randInt(men[i].age - gammaBar, men[i].age + gammaBar)
+
+
+        for j in range(len(neighbors)):
+
+            if b - gammaBar <= men[i].age <= b + gammaBar and  religion_neighbor(men[i], neighbors[j]) and education_neighbor(men[i], neighbors[j]):
+                if i != j:
+                    social_network.append(people[j])
         potential_wives = []
 
-        social_pressure = math.exp(beta * (probability_of_marriage(neighbors) - alpha)) / (1 + math.exp(beta * (probability_of_marriage(neighbors) - alpha)))
+
+        social_pressure = math.exp(beta * (probability_of_marriage(social_network) - alpha)) / (1 + math.exp(beta * (probability_of_marriage(social_network) - alpha)))
 
         set_parameters(social_pressure)
         for j in range(len(women)):
-            if religoun_neighbor(men[i], neighbors[j]) and \
+            if religion_neighbor(men[i], neighbors[j], 1) and \
                     men[i].age - 2 <= neighbors[j].age <= men[i].age + 2 and \
-                    education_neighbor(men[i], women[j]) and \
-                    economic_neighbor(men[i], women[j]) and \
-                    province_neighbor(men[i], women[j]):
-                potential_wives.append(neighbors[j])
+                    education_neighbor(men[i], women[j], 1) and \
+                    economic_neighbor(men[i], women[j], 1) and \
+                    province_neighbor(men[i], women[j], 1):
+                potential_wives.append(women[j])
 
 
         wife = select_wife(potential_wives, men[i])
@@ -153,16 +212,3 @@ simulate()
 
 
 
-
-
-
-
-
-"""
-for j in range(len(neighbors)):
-    if religoun_neighbor(men[i], neighbors[j]) and \
-            men[i].age - gammaBar <= neighbors[j].age <= men[i].age + gammaBar and \
-            education_neighbor(men[i], neighbors[j]):
-        socialNetwork.append(neighbors[j])
-
-"""
