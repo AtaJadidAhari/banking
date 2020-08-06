@@ -1,5 +1,6 @@
 import random
 import math
+import sys
 death_probs_male = [0 for i in range(99)]
 with open('./Data/deathprobmale.txt', 'r') as f:
     lines = f.readlines()
@@ -14,6 +15,19 @@ with open('./Data/deathprobfemale.txt', 'r') as f:
 
 
 
+marriage_probs = []
+with open('./Data/MarriageProb.txt', 'r') as f:
+    lines = f.readlines()
+
+    for line in lines:
+        marriage_probs.append(list(map(float, line.split('\t'))))
+
+age_marriage_probs = []
+with open('./Data/AgeMarriageProbs.txt', 'r') as f:
+    lines = f.readlines()
+    for line in lines:
+        age_marriage_probs.append(list(map(float, line.split('\t'))))
+
 
 
 def get_age(raw_age):
@@ -25,7 +39,7 @@ def get_age(raw_age):
 class Family:
 
     def __init__(self, id, parent_id, father, mother, childnum, children, maxChildAge, minChildAge):
-        self.id = id
+        self.family_id = id
         self.father = father
         self.mother = mother
         self.childnum = childnum
@@ -33,7 +47,7 @@ class Family:
         self.maxChildAge = maxChildAge
         self.minChildAge = minChildAge
         self.parent_id = parent_id
-
+        self.alive = True
 
 class Person:
 
@@ -45,7 +59,7 @@ class Person:
                  Card9805, Card9806, IsBehzisti_Malool, IsBimarkhas, SenfName, IsTamin_Karfarma, Tamin_KargarCount,
                  IsBazneshaste_Sandoghha, IsBimePardaz_Sandoghha, Daramad_Total_Rials):
         self.id = Id
-        self.parentId = ParentId
+        self.parent_id = ParentId
         self.gender = 0 #man
 
         if Gender == 'زن':
@@ -234,6 +248,25 @@ men_num = 0
 women_num = 0
 
 
+def set_parent_to_orphans(family):
+    max_age = 0
+    max_age_index = -1
+    for i in range(len(family.children)):
+        if family.children[i].age > max_age:
+            max_age = family.children[i].age
+            max_age_index = i
+    parent = family.children[max_age_index]
+
+    for i in range(len(family.children)):
+        family.children[i].parent_id = parent.parent_id
+
+    if parent.gender == 0:
+        family.father = parent
+    else:
+        family.mother = parent
+
+
+
 
 
 
@@ -246,9 +279,7 @@ def set_parent():
 
         if families[i].mother is None and families[i].father is None:
             to_remove.append(i)
-            for c in families[i].children:
-                children.append(c.index)
-            continue
+            set_parent_to_orphans(families[i])
         elif families[i].mother is None:
             for j in range(len(families[i].children)):
                 if families[i].children[j].gender == 1:
@@ -284,14 +315,14 @@ def set_parent():
 parent_ids = []
 with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
     lines = f.readlines()
-    for line in lines[1:100]:
+    for line in lines[1:50000]: #simulating on a part of data
         p = Person(person_index, *line.split(','))
         person_index += 1
-        parent_ids.append(p.parentId)
-        print(p.x, p.y, p.ProvinceId)
+        parent_ids.append(p.parent_id)
+        #print(p.x, p.y, p.ProvinceId)
         people.append(p)
 
-        if p.parentId == p.id: #this person is sarparast khanevar
+        if p.parent_id == p.id: #this person is sarparast khanevar
 
 
             if p.gender == 0:
@@ -329,10 +360,10 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
             else:
                 women.append(p)
 
-            if families[-1].parent_id != p.parentId:
+            if families[-1].parent_id != p.parent_id:
 
                 family_id += 1
-                families.append(Family(family_id, p.parentId, None, None, 0, [], 0, 100))
+                families.append(Family(family_id, p.parent_id, None, None, 0, [], 0, 100))
 
 
             families[-1].children.append(p)
@@ -348,11 +379,7 @@ for i in range(len(families)):
         families[i].father.married = True
         families[i].mother.married = True
 
-#print(families[23].father.id, families[23].parent_id)
-#print(people[61].parentId, people[61].id, people[61].family_id)
-#print(people[62].parentId, people[62].id, people[62].family_id)
-#print(people[63].parentId, people[63].id, people[63].family_id)
-#print(families[24].parent_id)
+
 
 for i in range(len(families)):
     if families[i].father is not None:
@@ -361,3 +388,5 @@ for i in range(len(families)):
         families[i].mother.family_id = i
     for j in range(len(families[i].children)):
         families[i].children[j].family_id = i
+
+
