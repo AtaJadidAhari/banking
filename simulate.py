@@ -9,8 +9,8 @@ d = 10 #province distance
 w = 2 #economic distance
 
 gammaBar = 2 #in calculating social network
-alpha = 2 #in calculating social pressure
-beta = 2 #in calculating social pressure
+alpha = 0 #in calculating social pressure
+beta = 1#in calculating social pressure
 
 
 r_low = -1
@@ -51,7 +51,7 @@ def set_parameters(sn):
 
 def religion_neighbor(p1, p2, method=0):
     if method == 0:
-        if math.abs(p1.religion - p2.religion) <= r:
+        if math.fabs(p1.religion - p2.religion) <= r:
             return True
         return False
     else:
@@ -61,7 +61,7 @@ def religion_neighbor(p1, p2, method=0):
 
 def education_neighbor(p1, p2, method=0):
     if method == 0:
-        if math.abs(p1.education - p2.education) <= e:
+        if math.fabs(p1.education - p2.education) <= e:
             return True
         return False
     else:
@@ -71,13 +71,13 @@ def education_neighbor(p1, p2, method=0):
 
 def province_neighbor(p1, p2, method=0):
 
-    if math.abs(p1.x - p2.x)**2 + math.abs(p1.y - p2.y)**2 <= d:
+    if math.fabs(p1.x - p2.x)**2 + math.fabs(p1.y - p2.y)**2 <= d:
         return True
     return False
 
 def economic_neighbor(p1, p2, method=0):
     if method == 0:
-        if math.abs(p1.w - p2.w) <= w:
+        if math.fabs(p1.w - p2.w) <= w:
             return True
         return False
     else:
@@ -104,14 +104,20 @@ def death(p):
     p.alive = False
     family = families[p.family_id]
 
-
     if family.father is not None and p.id == family.father.id:
         family.father = None
+        if family.mother is None and len(family.children) == 0:
+            family.alive = False
+        elif family.mother is None:
+            set_parent_to_orphans(family)
     elif family.mother is not None and p.id == family.mother.id:
         family.mother = None
+        if family.father is None and len(family.children) == 0:
+            family.alive = False
+        elif family.father is None:
+            set_parent_to_orphans(family)
     else:
-        #print(p.id, p.parentId, family.parent_id, p.family_id)
-
+        #print(p.family_id , family.family_id, p.parent_id, p.id)
         family.children.remove(p)
 
 
@@ -141,50 +147,69 @@ def probability_of_marriage(neighbors):
 
 
 def create_family(husband, wife):
-    families.append(Family(len(families), husband.id, husband, wife, 0, [], 0, 100))
+    if husband.id == husband.parent_id:
+        family = families[husband.family_id]
+        family.mother = wife
+        wife.family_id = family.family_id
+    elif wife.id == wife.parent_id:
+        family = families[wife.family_id]
+        family.father = husband
+        husband.family_id = family.family_id
+    else:
+        id = len(families)
+        families.append(Family(id, husband.id, husband, wife, 0, [], 0, 100))
+        husband.family_id = id
+        wife.family_id = id
     husband.married = True
     wife.married = True
 
 def select_wife(wifes, man):
     #select wife based on probability
+
     return wifes[0]
 
 
 def marriage():
-    for i in range(len(men)):
-        neighbors = []
-        for j in range(len(people)):
+    for i in range(len(people)):
 
-            if province_neighbor(men[i], people[j]) and  economic_neighbor(men[i], people[j])  :
-                if i != j:
-                    neighbors.append(people[j])
+        if people[i].gender == 0 and not people[i].married and people[i].alive: #bachelors
+            if random.random() < 0.1: #TODO fix probabilty
+                neighbors = []
+                for j in range(len(people)):
 
-        social_network = []
-        b = random.randInt(men[i].age - gammaBar, men[i].age + gammaBar)
+                    if province_neighbor(people[i], people[j]) and  economic_neighbor(people[i], people[j])  :
+                        if i != j:
+                            neighbors.append(people[j])
 
-
-        for j in range(len(neighbors)):
-
-            if b - gammaBar <= men[i].age <= b + gammaBar and  religion_neighbor(men[i], neighbors[j]) and education_neighbor(men[i], neighbors[j]):
-                if i != j:
-                    social_network.append(people[j])
-        potential_wives = []
+                social_network = []
+                b = random.randint(people[i].age - gammaBar, people[i].age + gammaBar)
 
 
-        social_pressure = math.exp(beta * (probability_of_marriage(social_network) - alpha)) / (1 + math.exp(beta * (probability_of_marriage(social_network) - alpha)))
+                for j in range(len(neighbors)):
 
-        set_parameters(social_pressure)
-        for j in range(len(women)):
-            if religion_neighbor(men[i], neighbors[j], 1) and \
-                    men[i].age - 2 <= neighbors[j].age <= men[i].age + 2 and \
-                    education_neighbor(men[i], women[j], 1) and \
-                    economic_neighbor(men[i], women[j], 1) and \
-                    province_neighbor(men[i], women[j], 1):
-                potential_wives.append(women[j])
+                    if b - gammaBar <= people[i].age <= b + gammaBar and  religion_neighbor(people[i], neighbors[j]) and education_neighbor(people[i], neighbors[j]):
+                        if i != j:
+                            social_network.append(people[j])
+                potential_wives = []
 
+                #print(len(social_network))
+                #print(probability_of_marriage(social_network))
+                social_pressure = math.exp(beta * (probability_of_marriage(social_network) - alpha)) / (1 + math.exp(beta * (probability_of_marriage(social_network) - alpha)))
+                #print(social_pressure)
+                set_parameters(social_pressure)
+                for j in range(len(people)):
+                    if people[j].gender == 1 and not people[j].married and people[j].alive: #bachelors
+                        if religion_neighbor(people[i], people[j], 1) and \
+                                people[i].age - 2 <= people[j].age <= people[i].age + 2 and \
+                                education_neighbor(people[i], people[j], 1) and \
+                                economic_neighbor(people[i], people[j], 1) and \
+                                province_neighbor(people[i], people[j], 1):
+                            potential_wives.append(people[j])
 
-        wife = select_wife(potential_wives, men[i])
-        create_family(men[i], wife)
+                if len(potential_wives) > 0:
+                    #print("family added")
+                    wife = select_wife(potential_wives, people[i])
+                    create_family(people[i], wife)
 
 alive = 0
 
@@ -193,22 +218,19 @@ def simulate():
     step = 0
     num_iter = 3
     while step < num_iter:
+
         print('iteration: ' + str(step))
+        print(len(families))
         step += 1
 
 
-        age() #age and death
-        # marriage()
-        # reproduce()
-        educate()
+
+        marriage()
+        #reproduce()
+        #educate()
+        #age()  # age and death
 
 simulate()
-
-
-
-
-
-
 
 
 
