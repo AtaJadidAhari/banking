@@ -236,7 +236,7 @@ def add_ages(age):
         ages[19] += 1
 
 families = []
-family_id = 1
+family_id = 0
 person_index = 0
 people = []
 ages = [0 for i in range(20)]
@@ -287,7 +287,7 @@ def set_parent():
                     if math.fabs(families[i].children[j].age - families[i].father.age) < minimum_difference:
                         index = j
                         minimum_difference =  math.fabs(families[i].children[j].age - families[i].father.age)
-            if minimum_difference < 20:
+            if minimum_difference < 15:
                 families[i].mother = families[i].children[index]
                 del(families[i].children[index])
 
@@ -298,7 +298,7 @@ def set_parent():
                     if math.fabs(families[i].children[j].age - families[i].mother.age) < minimum_difference:
                         index = j
                         minimum_difference = math.fabs(families[i].children[j].age - families[i].mother.age)
-            if minimum_difference < 20:
+            if minimum_difference <= 15:
                 families[i].father = families[i].children[index]
                 del (families[i].children[index])
     """
@@ -353,22 +353,22 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
                     families[-1].mother = p
 
         else: #this person is not sarparast khanevar
-            if p.gender == 0 and p.age > 15:
+            #if p.gender == 0 and p.age > 15:
 
-                men.append(p)
+            #    men.append(p)
 
-            else:
-                women.append(p)
+            #else:
+            #    women.append(p)
 
             if families[-1].parent_id != p.parent_id:
 
-                family_id += 1
-                families.append(Family(family_id, p.parent_id, None, None, 0, [], 0, 100))
 
+                families.append(Family(family_id, p.parent_id, None, None, 0, [], 0, 100))
+                family_id += 1
 
             families[-1].children.append(p)
 
-
+        p.family_id = families[-1].family_id
         add_ages(p.age)
 
 
@@ -380,13 +380,15 @@ for i in range(len(families)):
         families[i].mother.married = True
 
 
-
+"""
 for i in range(len(families)):
     if families[i].father is not None:
-        families[i].father.family_id = i
-    if families[i].mother is not None:
-        families[i].mother.family_id = i
-    for j in range(len(families[i].children)):
-        families[i].children[j].family_id = i
 
+        families[i].father.family_id = families[i].family_id
+    if families[i].mother is not None:
+        families[i].mother.family_id = families[i].family_id
+
+    for j in range(len(families[i].children)):
+        families[i].children[j].family_id = families[i].family_id
+"""
 
