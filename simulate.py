@@ -5,7 +5,7 @@ marriage_probs = [0.1 for i in range(100)]
 
 r = 1 #religion difference
 e = 2 #education difference
-d = 10 #province distance
+d = 4 #province distance
 w = 2 #economic distance
 
 gammaBar = 2 #in calculating social network
@@ -42,7 +42,7 @@ def set_parameters(sn):
 
     else:
         r_low = w_low = e_low = -1
-        r_high = w_high = e_high = -3
+        r_high = w_high = e_high = 5
 
 
 
@@ -117,7 +117,8 @@ def death(p):
         elif family.father is None:
             set_parent_to_orphans(family)
     else:
-        #print(p.family_id , family.family_id, p.parent_id, p.id)
+
+
         family.children.remove(p)
 
 
@@ -139,32 +140,102 @@ def age():
 
 
 def probability_of_marriage(neighbors):
+
     married = 0
     for person in neighbors:
         if person.married:
             married += 1
+
     return married/len(neighbors)
+
+added_familis = []
+
+
+
+
+
+def add_child(p, family_id):
+    family = families[family_id]
+    family.append(p)
+
+
+
+def create_new_child(family):
+    father = family.father
+    mother = family.mother
+
+    child = Person([0 for i in range(44)])
+
+    child.IE = (father.IE + mother.IE)/2
+    child.family_id = family.family_id
+    child.parent_id = father.id
+
+    add_child(child, family.family_id)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def create_family(husband, wife):
+    #print(husband.family_id, wife.family_id, 'here')
+    wife_family = families[wife.family_id]
+    husband_family = families[husband.family_id]
     if husband.id == husband.parent_id:
+
         family = families[husband.family_id]
-        family.mother = wife
         wife.family_id = family.family_id
+        if wife.parent_id == wife.id:
+            for i in range(len(wife_family.children)):
+                family.children.append(wife_family.children[i])
+                wife_family.children[i].family_id = family.family_id
+                wife_family.children[i].parent_id = husband.id
+
+            wife_family.alive = False
     elif wife.id == wife.parent_id:
         family = families[wife.family_id]
         family.father = husband
+        if husband.parent_id == husband.id:
+            for i in range(len(husband_family.children)):
+                family.children.append(husband_family.children[i])
+                husband_family.children[i].family_id = family.family_id
+                husband_family.children[i].parent_id = husband.id
+
         husband.family_id = family.family_id
+
     else:
         id = len(families)
         families.append(Family(id, husband.id, husband, wife, 0, [], 0, 100))
+        family = families[-1]
         husband.family_id = id
+
         wife.family_id = id
+
+
+
     husband.married = True
     wife.married = True
+    wife.parent_id = husband.id
+    husband.parent_id = husband.id
+    family.mother = wife
+    family.father = husband
+    added_familis.append(family.family_id)
+
+
 
 def select_wife(wifes, man):
-    #select wife based on probability
+    #TODO select wife based on probability
 
     return wifes[0]
 
@@ -182,36 +253,48 @@ def marriage():
                             neighbors.append(people[j])
 
                 social_network = []
+
                 b = random.randint(people[i].age - gammaBar, people[i].age + gammaBar)
 
 
                 for j in range(len(neighbors)):
 
-                    if b - gammaBar <= people[i].age <= b + gammaBar and  religion_neighbor(people[i], neighbors[j]) and education_neighbor(people[i], neighbors[j]):
+                    if b - gammaBar <= neighbors[j].age <= b + gammaBar and  religion_neighbor(people[i], neighbors[j]) and education_neighbor(people[i], neighbors[j]):
                         if i != j:
                             social_network.append(people[j])
                 potential_wives = []
 
-                #print(len(social_network))
-                #print(probability_of_marriage(social_network))
+                if len(social_network) == 0:
+                    continue
                 social_pressure = math.exp(beta * (probability_of_marriage(social_network) - alpha)) / (1 + math.exp(beta * (probability_of_marriage(social_network) - alpha)))
-                #print(social_pressure)
+
                 set_parameters(social_pressure)
-                for j in range(len(people)):
-                    if people[j].gender == 1 and not people[j].married and people[j].alive: #bachelors
-                        if religion_neighbor(people[i], people[j], 1) and \
-                                people[i].age - 2 <= people[j].age <= people[i].age + 2 and \
-                                education_neighbor(people[i], people[j], 1) and \
-                                economic_neighbor(people[i], people[j], 1) and \
-                                province_neighbor(people[i], people[j], 1):
-                            potential_wives.append(people[j])
+                for j in range(len(social_network)):
+                    if social_network[j].gender == 1 and not social_network[j].married and social_network[j].alive: #bachelors
+                        if religion_neighbor(people[i], social_network[j], 1) and \
+                                people[i].age - 2 <= social_network[j].age <= people[i].age + 2 and \
+                                education_neighbor(people[i], social_network[j], 1) and \
+                                economic_neighbor(people[i], social_network[j], 1) and \
+                                province_neighbor(people[i], social_network[j], 1):
+                            potential_wives.append(social_network[j])
 
                 if len(potential_wives) > 0:
-                    #print("family added")
+
                     wife = select_wife(potential_wives, people[i])
                     create_family(people[i], wife)
 
 alive = 0
+
+def print_population():
+    num = 0
+    for i in people:
+        if i.alive:
+            num += 1
+    print("population in this iteration: ", num)
+
+
+
+
 
 def simulate():
     global alive
@@ -220,15 +303,19 @@ def simulate():
     while step < num_iter:
 
         print('iteration: ' + str(step))
-        print(len(families))
+        print_population()
+
         step += 1
 
 
 
-        marriage()
+        #marriage()
+        print(len(added_familis), ' marriages occurred.')
         #reproduce()
         #educate()
+
         #age()  # age and death
+
 
 simulate()
 
