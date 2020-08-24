@@ -1,6 +1,8 @@
 import random
 import math
 import sys
+
+#print("Person")
 death_probs_male = [0 for i in range(99)]
 with open('./Data/deathprobmale.txt', 'r') as f:
     lines = f.readlines()
@@ -316,6 +318,7 @@ parent_ids = []
 with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
     lines = f.readlines()
     for line in lines[1:50000]: #simulating on a part of data
+
         p = Person(person_index, *line.split(','))
         person_index += 1
         parent_ids.append(p.parent_id)
