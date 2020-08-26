@@ -15,11 +15,11 @@ def print_population():
     print("population in this iteration: ", num)
 
 
-def simulate():
+def simulate(num_iter):
 
 
     step = 0
-    num_iter = 3
+
     while step < num_iter:
 
 

@@ -381,7 +381,7 @@ for i in range(len(families)):
     if families[i].father is not None and families[i].mother is not None:
         families[i].father.married = True
         families[i].mother.married = True
-
+print(len(people))
 
 """
 for i in range(len(families)):
