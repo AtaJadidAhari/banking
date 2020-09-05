@@ -1,10 +1,8 @@
-import Person
 from marriage import *
 from educate import *
 from age import *
-import helper_functions
-import math
-import random
+from reproduce import *
+
 
 #print('simulate')
 def print_population():
@@ -28,15 +26,15 @@ def simulate(num_iter):
 
         step += 1
 
-        marriage()
+        #marriage()
         print(len(added_familis), ' marriages occurred.')
-        #reproduce()
+        reproduce()
         #educate()
 
-        age()  # age and death
+        #age()  # age and death
 
 
-#simulate()
+simulate(3)
 
 
 

@@ -12,6 +12,7 @@ gammaBar = 2 #in calculating social network
 alpha = 0 #in calculating social pressure
 beta = 1#in calculating social pressure
 
+xi = 2
 
 r_low = -1
 r_high = 2

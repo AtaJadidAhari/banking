@@ -65,11 +65,17 @@ tabControl.pack(expand=1, fill='both')
 
 ents = makeform(tab2, fields)
 
+T = tk.Text(tab2,  height=4, width=4)
+
+T.insert(tk.END, "در این شبیه سازی، از اطلاعات 1200890 عامل استفاده شده است.\n همچنین تعداد 50000 خانوار اولیه در داده ها موجود بودند.")
+T.pack(side=tk.BOTTOM, fill='x')
+T.tag_configure("right", justify='right')
+T.tag_add("right", 1.0, "end")
 
 b1 = tk.Button(tab2, text='شبیه سازی',
            command=(lambda e=ents: ui_simualte(e)))
 
-b1.pack(side=tk.LEFT, padx=5, pady=5)
+b1.pack(side=tk.BOTTOM, padx=1, pady=1)
 
 
 
