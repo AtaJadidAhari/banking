@@ -1,6 +1,4 @@
 
-
-	
 with open('./Data/Constants.txt', 'r') as f:
 	lines = f.readlines()
 	years_before_first_child_mean = float(lines[1])
@@ -9,8 +7,8 @@ with open('./Data/Constants.txt', 'r') as f:
 	average_age_of_marriage_women = float(lines[7])
 	marriage_age_var = float(lines[9])
 	last_year_to_have_first_child = float(lines[11])
-	
-#To keep Counts of human by age
+
+# To keep Counts of human by age
 humans_by_age = [0 for i in range(100)] 	
 
 
@@ -43,8 +41,8 @@ with open('./Data/deathprobfemale.txt', 'r') as f:
 		
 
 		
-#mr nikbakhts: it is a 63 36 array
-#data is 62 36
+# mr nikbakhts: it is a 63 36 array
+# data is 62 36
 marriage_probs =  []
 with open('./Data/MarriageProb.txt', 'r') as f:
 	lines = f.readlines()
@@ -140,7 +138,7 @@ def calculate_religion(V_religion):
 
 class Person():
 	
-	def __init__(self,id, age, gender, married, divorced, childnum, marriage_age, religion, education, income, spouse, \
+	def __init__(self ,id, age, gender, married, divorced, childnum, marriage_age, religion, education, income, spouse, \
 				parent1, parent2, family_number, first_birth_age, relation, work_hour, age_radius_SN, IE, last_child_birth, ostan):
 		self.id = id
 		self.age = age
@@ -177,12 +175,9 @@ class Family():
 		self.children = children
 		self.maxChildAge = maxChildAge
 		self.minChildAge = minChildAge
-		
-		
-		
-               
 
-#gender : men 1, women 0
+
+# gender : men 1, women 0
 family_number = 0
 fn = 0
 people = []
@@ -197,7 +192,7 @@ with open('./Data/InitialSettings3.txt', 'r') as f:
 		
 		processed = [-1 if i == '' else float(i) for i in processed] 
 		processed = list(map(float, processed))
-		V_ID = processed[0] - 1 #make it zero based
+		V_ID = processed[0] - 1  # make it zero based
     
 		V_Ostan = processed[1]
 		V_BodeKhanevar = processed[2]
@@ -243,7 +238,7 @@ with open('./Data/InitialSettings3.txt', 'r') as f:
 		
 		p1 = -1
 		p2 = -1
-		if V_Relation == 1: #sarparast khanevar
+		if V_Relation == 1:  # sarparast khanevar
 			
 			if V_Gender == 1:
 				p1 = V_ID			
@@ -265,7 +260,7 @@ with open('./Data/InitialSettings3.txt', 'r') as f:
 				families[-1].p2 = V_ID
 			
 		
-		elif V_Relation == 3: #child
+		elif V_Relation == 3:  # child
 			fn = families[-1].id
 			
 			families[-1].children.append(V_ID)
@@ -281,8 +276,8 @@ with open('./Data/InitialSettings3.txt', 'r') as f:
 		age_radius_SN = -1
 		IE = -1
 		last_child_birth = -1
-		
-		#ID, Ostan, BODE_KHANEVAR, BASTEGY_BA_SARPARASTE_KHANEVAR, SEX, AGE, VAZE_EGHAMAT, Vaze_Tahsil, Vaze_Savad, Madrake_Tahsili, Reshte_Tahsili, Vaze_Faaliat, Shoghl, Vaze_Shoghli, Marital, NEED_TO_HELP, Childnumber, Spouse, religion, work_hour, Income_Statusque,Income_WelfarePlus, Income_WelfareMinus, Income_Compactness, Income_Scattered
+
+		# ID, Ostan, BODE_KHANEVAR, BASTEGY_BA_SARPARASTE_KHANEVAR, SEX, AGE, VAZE_EGHAMAT, Vaze_Tahsil, Vaze_Savad, Madrake_Tahsili, Reshte_Tahsili, Vaze_Faaliat, Shoghl, Vaze_Shoghli, Marital, NEED_TO_HELP, Childnumber, Spouse, religion, work_hour, Income_Statusque,Income_WelfarePlus, Income_WelfareMinus, Income_Compactness, Income_Scattered
 		people.append(Person(V_ID, V_Age, V_Gender, married,  divorced, V_childnum, marriage_age, religion, education,\
 					income, V_spouse, p1, p2, fn, first_birth_age, V_Relation, work_hour, age_radius_SN, IE, last_child_birth, V_Ostan))
 		

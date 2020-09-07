@@ -1,16 +1,16 @@
 import math
-import random
-#print('Helper function')
+
+# print('Helper function')
 marriage_probs = [0.1 for i in range(100)]
 
-r = 1 #religion difference
-e = 2 #education difference
-d = 4 #province distance
-w = 2 #economic distance
+r = 1  # religion difference
+e = 2  # education difference
+d = 4  # province distance
+w = 2  # economic distance
 
-gammaBar = 2 #in calculating social network
-alpha = 0 #in calculating social pressure
-beta = 1#in calculating social pressure
+gammaBar = 2  # in calculating social network
+alpha = 0  # in calculating social pressure
+beta = 1  # in calculating social pressure
 
 xi = 2
 
@@ -21,14 +21,9 @@ w_high = 2
 e_low = -1
 e_high = 2
 
-
 added_familis = []
 
-
-
-
 alive = 0
-
 
 
 def set_parameters(sn):
@@ -50,10 +45,6 @@ def set_parameters(sn):
         r_high = w_high = e_high = 5
 
 
-
-
-
-
 def religion_neighbor(p1, p2, method=0):
     if method == 0:
         if math.fabs(p1.religion - p2.religion) <= r:
@@ -63,6 +54,7 @@ def religion_neighbor(p1, p2, method=0):
         if r_low <= p2.religion - p1.religion <= r_high:
             return True
         return False
+
 
 def education_neighbor(p1, p2, method=0):
     if method == 0:
@@ -74,11 +66,12 @@ def education_neighbor(p1, p2, method=0):
             return True
         return False
 
-def province_neighbor(p1, p2, method=0):
 
-    if math.fabs(p1.x - p2.x)**2 + math.fabs(p1.y - p2.y)**2 <= d:
+def province_neighbor(p1, p2, method=0):
+    if math.fabs(p1.x - p2.x) ** 2 + math.fabs(p1.y - p2.y) ** 2 <= d:
         return True
     return False
+
 
 def economic_neighbor(p1, p2, method=0):
     if method == 0:
@@ -89,8 +82,3 @@ def economic_neighbor(p1, p2, method=0):
         if w_low <= p2.w - p1.w <= w_high:
             return True
         return False
-
-
-
-
-

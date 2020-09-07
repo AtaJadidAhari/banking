@@ -1,10 +1,11 @@
 import Person
 import random
+
 families = Person.families
 people = Person.people
 
-def death(p):
 
+def death(p):
     p.alive = False
     family = families[p.family_id]
 
@@ -22,7 +23,6 @@ def death(p):
             Person.set_parent_to_orphans(family)
     else:
 
-
         family.children.remove(p)
 
 
@@ -32,11 +32,11 @@ def age():
             people[i].age += 1
             if people[i].age >= 100:
                 people[i].age = 99
-            if people[i].gender == 0: #man:
+            if people[i].gender == 0:  # man:
 
                 if random.random() <= Person.death_probs_male[people[i].age - 1]:
                     death(people[i])
 
             else:
-                if random.random() <= Person.death_probs_female[people[i].age -1]:
+                if random.random() <= Person.death_probs_female[people[i].age - 1]:
                     death(people[i])

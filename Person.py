@@ -1,9 +1,12 @@
 import random
 import math
 
-
-ProvinceNames = {'آذربایجان غربی': 0, 'آذربایجان شرقی': 1, 'اردبیل': 2, 'گیلان': 3, 'کردستان': 4, 'زنجان': 5, 'قزوین': 6,'تهران': 7, 'البرز': 7, 'مازندران': 8,'گلستان': 9, 'خراسان شمالی': 10,'خراسان رضوی': 11, 'کرمانشاه': 12, 'همدان': 13, 'مرکزی': 14, 'قم': 15,'سمنان': 16, 'ایلام': 17, 'لرستان': 18, 'اصفهان': 19, 'یزد': 20, 'خراسان جنوبی' : 21, 'خوزستان': 22, 'چهارمحال وبختیاری' : 23, 'کهگیلویه و بویراحمد': 24, 'بوشهر':25, 'فارس': 26, 'کرمان':27, 'سیستان و بلوچستان': 28, 'هرمزگان': 29}
-
+ProvinceNames = {'آذربایجان غربی': 0, 'آذربایجان شرقی': 1, 'اردبیل': 2, 'گیلان': 3, 'کردستان': 4, 'زنجان': 5,
+                 'قزوین': 6, 'تهران': 7, 'البرز': 7, 'مازندران': 8, 'گلستان': 9, 'خراسان شمالی': 10, 'خراسان رضوی': 11,
+                 'کرمانشاه': 12, 'همدان': 13, 'مرکزی': 14, 'قم': 15, 'سمنان': 16, 'ایلام': 17, 'لرستان': 18,
+                 'اصفهان': 19, 'یزد': 20, 'خراسان جنوبی': 21, 'خوزستان': 22, 'چهارمحال وبختیاری': 23,
+                 'کهگیلویه و بویراحمد': 24, 'بوشهر': 25, 'فارس': 26, 'کرمان': 27, 'سیستان و بلوچستان': 28,
+                 'هرمزگان': 29}
 
 death_probs_male = [0 for i in range(99)]
 with open('./Data/deathprobmale.txt', 'r') as f:
@@ -16,8 +19,6 @@ with open('./Data/deathprobfemale.txt', 'r') as f:
     lines = f.readlines()
     for i in range(99):
         death_probs_female[i] = (float(lines[i]))
-
-
 
 marriage_probs = []
 with open('./Data/MarriageProb.txt', 'r') as f:
@@ -33,11 +34,9 @@ with open('./Data/AgeMarriageProbs.txt', 'r') as f:
         age_marriage_probs.append(list(map(float, line.split('\t'))))
 
 
-
 def get_age(raw_age):
     ages.append(2020 - int(raw_age.split('-')[0]))
     return 2020 - int(raw_age.split('-')[0])
-
 
 
 class Family:
@@ -53,6 +52,7 @@ class Family:
         self.parent_id = parent_id
         self.alive = True
 
+
 class Person:
 
     def __init__(self, index, Id, ParentId, Gender, BirthDate, PostalCode, IsUrban, ProvinceName, CountyName,
@@ -64,7 +64,7 @@ class Person:
                  IsBazneshaste_Sandoghha, IsBimePardaz_Sandoghha, Daramad_Total_Rials):
         self.id = Id
         self.parent_id = ParentId
-        self.gender = 0 #man
+        self.gender = 0  # man
 
         if Gender == 'زن':
             self.gender = 1
@@ -114,9 +114,9 @@ class Person:
         self.religion = random.randint(0, 7)
         self.education = random.randint(0, 5)
         self.alive = True
-        self.x = self.ProvinceId//5
-        self.y = self.ProvinceId - (self.ProvinceId//5 * 5)
-        self.IE = 0 #intended education
+        self.x = self.ProvinceId // 5
+        self.y = self.ProvinceId - (self.ProvinceId // 5 * 5)
+        self.IE = 0  # intended education
         self.w = 0
         self.married = False
         self.family_id = -1
@@ -124,14 +124,12 @@ class Person:
         self.index = index
 
     def get_provinceId(self):
-
         self.ProvinceId = ProvinceNames[self.ProvinceName]
-
-
 
 
 def add_ages(age):
     ages[(age - 1) // 5] += 1
+
 
 families = []
 family_id = 0
@@ -164,10 +162,6 @@ def set_parent_to_orphans(family):
         family.mother = parent
 
 
-
-
-
-
 def set_parent():
     to_remove = []
     children = []
@@ -184,10 +178,10 @@ def set_parent():
 
                     if math.fabs(families[i].children[j].age - families[i].father.age) < minimum_difference:
                         index = j
-                        minimum_difference =  math.fabs(families[i].children[j].age - families[i].father.age)
+                        minimum_difference = math.fabs(families[i].children[j].age - families[i].father.age)
             if minimum_difference < 15:
                 families[i].mother = families[i].children[index]
-                del(families[i].children[index])
+                del (families[i].children[index])
 
         else:
             for j in range(len(families[i].children)):
@@ -213,19 +207,17 @@ def set_parent():
 parent_ids = []
 with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
     lines = f.readlines()
-    for line in lines[1:50000]: #simulating on a part of data
+    for line in lines[1:50000]:  # simulating on a part of data
 
         p = Person(person_index, *line.split(','))
         person_index += 1
         parent_ids.append(p.parent_id)
-        #print(p.x, p.y, p.ProvinceId)
+        # print(p.x, p.y, p.ProvinceId)
         people.append(p)
 
-        if p.parent_id == p.id: #this person is sarparast khanevar
-
+        if p.parent_id == p.id:  # this person is sarparast khanevar
 
             if p.gender == 0:
-
 
                 if len(families) == 0:
 
@@ -251,17 +243,15 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
 
                     families[-1].mother = p
 
-        else: #this person is not sarparast khanevar
-            #if p.gender == 0 and p.age > 15:
+        else:  # this person is not sarparast khanevar
+            # if p.gender == 0 and p.age > 15:
 
             #    men.append(p)
 
-            #else:
+            # else:
             #    women.append(p)
 
             if families[-1].parent_id != p.parent_id:
-
-
                 families.append(Family(family_id, p.parent_id, None, None, 0, [], 0, 100))
                 family_id += 1
 
@@ -270,7 +260,6 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
         p.family_id = families[-1].family_id
         add_ages(p.age)
 
-
 set_parent()
 
 for i in range(len(families)):
@@ -278,6 +267,3 @@ for i in range(len(families)):
         families[i].father.married = True
         families[i].mother.married = True
 print(len(people))
-
-
-
