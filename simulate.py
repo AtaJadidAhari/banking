@@ -20,6 +20,7 @@ def simulate(num_iter):
         marriage()
         print(len(added_familis), ' marriages occurred.')
         reproduce()
+        print(len(added_people), ' new person born.')
         educate()
         age()  # age and death
 

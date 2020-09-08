@@ -22,6 +22,7 @@ e_low = -1
 e_high = 2
 
 added_familis = []
+added_people = []
 
 alive = 0
 

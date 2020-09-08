@@ -35,6 +35,8 @@ with open('./Data/AgeMarriageProbs.txt', 'r') as f:
 
 
 def get_age(raw_age):
+    if raw_age == "0":
+        return 0
     ages.append(2020 - int(raw_age.split('-')[0]))
     return 2020 - int(raw_age.split('-')[0])
 
@@ -256,6 +258,7 @@ with open("Sample_AllNafar_981126.txt", encoding='utf-8') as f:
                 family_id += 1
 
             families[-1].children.append(p)
+            families[-1].childnum += 1
 
         p.family_id = families[-1].family_id
         add_ages(p.age)

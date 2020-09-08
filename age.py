@@ -40,3 +40,7 @@ def age():
             else:
                 if random.random() <= Person.death_probs_female[people[i].age - 1]:
                     death(people[i])
+
+    for i in range(len(families)):
+        if len(families[i].children) > 0:
+            families[i].maxChildAge += 1

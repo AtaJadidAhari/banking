@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f73273ce-1df5-4b4b-a33f-a371c5ac4462" name="Default Changelist" comment="" />
+    <list default="true" id="f73273ce-1df5-4b4b-a33f-a371c5ac4462" name="Default Changelist" comment="try to improve reproduce" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,7 +57,15 @@
     </task>
     <servers />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="try to improve reproduce" />
+    <option name="LAST_COMMIT_MESSAGE" value="try to improve reproduce" />
+  </component>
   <component name="WindowStateProjectService">
+    <state x="698" y="343" key="#Notifications" timestamp="1599510399469">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="698" y="343" key="#Notifications/0.0.1920.1040@0.0.1920.1040" timestamp="1599510399469" />
     <state x="414" y="174" width="1092" height="764" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1599471971466">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -70,25 +78,25 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="286" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1599471970247" />
-    <state width="1461" height="277" key="GridCell.Tab.0.bottom" timestamp="1599510314569">
+    <state width="1898" height="277" key="GridCell.Tab.0.bottom" timestamp="1599531058614">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1461" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1599510314569" />
-    <state width="1461" height="277" key="GridCell.Tab.0.center" timestamp="1599510314569">
+    <state width="1898" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1599531058614" />
+    <state width="1898" height="277" key="GridCell.Tab.0.center" timestamp="1599531058614">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1461" height="277" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1599510314569" />
-    <state width="1461" height="277" key="GridCell.Tab.0.left" timestamp="1599510314568">
+    <state width="1898" height="277" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1599531058614" />
+    <state width="1898" height="277" key="GridCell.Tab.0.left" timestamp="1599531058614">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1461" height="277" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1599510314568" />
-    <state width="1461" height="277" key="GridCell.Tab.0.right" timestamp="1599510314569">
+    <state width="1898" height="277" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1599531058614" />
+    <state width="1898" height="277" key="GridCell.Tab.0.right" timestamp="1599531058614">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1461" height="277" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1599510314569" />
-    <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1599510281382">
+    <state width="1898" height="277" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1599531058614" />
+    <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1599510374520">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1599510281382" />
+    <state x="777" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1599510374520" />
   </component>
 </project>
